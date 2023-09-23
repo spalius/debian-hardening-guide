@@ -41,7 +41,16 @@ To enable AppArmor for Firejail, do ```sudo apparmor_parser -r /etc/apparmor.d/f
 
 Download the most current release and open the folder in your terminal. Use ```make``` to build it. In order to install hardened_malloc, copy libhardened_malloc.so in the /out folder to ```/usr/local/lib/```. You can use it with Firejail. This may break some applications and generally speaking, your performance will be decreased. For applications which require performance, don't use hardened_malloc.
 
-To enable hardened_malloc system-wide, create and edit ```/etc/ld.so.preload``` to contain ```/usr/local/lib/libhardened_malloc.so```. This may break some applications and will lower performance. Soon, I will make it possible to create exceptions for applications that don't play well with this.
+To enable hardened_malloc system-wide, create and edit ```/etc/ld.so.preload``` to contain ```/usr/local/lib/libhardened_malloc.so```. This may break some applications and will lower performance. For video games and other performance requiring applications, consider disabling hardened_malloc. If you want to view which applications are using libhardened_malloc, do ```sudo lsof -w +c 0 /usr/lib/libhardened_malloc.so | awk '{print $1}' | sort```.
+
+If you want to create an exception for an application, for example, Firefox, create a local profile and add ```blacklist /etc/ld.so.preload```. Firefox itself doesn't work with libhardened_malloc currently.
+
+Make sure to raise ```vm.max_map_count```. In ```/etc/sysctl.d/hardened_malloc.conf```, add ```vm.max_map_count = 1048576```.
+
+# Apt
+Apt by default uses http for downloads. For improved privacy, in ```/etc/apt/sources.list```, you can replace http with https.
+
+
 
 # Sources
 - [1] [Security - ArchWiki](https://wiki.archlinux.org/title/Security)
