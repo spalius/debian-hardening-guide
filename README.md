@@ -25,10 +25,14 @@ To install Firejail, execute ```sudo apt install firejail```.
 
 [In order to avoid privilege escalation vulnerabilities](https://firejail.wordpress.com/documentation-2/basic-usage/#suid), edit ```/etc/firejail/firejail.config``` to include ```force-nonewprivs yes```. This may break Chromium browsers.
 
-Use ```sudo firecfg``` to integrate Firejail with your desktop environment. Launching applications through your desktop environment will launch them with Firejail. Right click menus in your file browser should also work with this, when launching applications.
+Execute ```sudo firecfg``` to integrate Firejail with your desktop environment. Launching applications through your desktop environment will launch them with Firejail. Right click menus in your file browser should also work with this, when launching applications.
 
-If an application doesn't work with Firejail properly, you can disable firecfg from integrating it with Firejail.
+If an application doesn't work with Firejail properly, you can disable firecfg from integrating it with Firejail. Comment out, using #, an entry in ```/etc/firejail/firecfg.config``` and run firecfg again.
 
+In order to disable network access for a specific application, use --net=none. For example, ```firejail vlc --net=none```. This may be useful for applications which don't need network access to work.
+
+## Wayland
+[Keyloggers on Xorg are a big issue](https://theinvisiblethings.blogspot.com/2011/04/linux-security-circus-on-gui-isolation.html) Sandboxing can be rendered useless if any application can become a keylogger. Use Wayland with every single application that supports it. Firefox ESR, for some strange reason, doesn't run on Wayland by default on Debian 12, even if you are on a Wayland session. Launch Firefox with this environment variable: ```MOZ_ENABLE_WAYLAND=1```. To make this permanent, edit /usr/bin/firefox to include, in the exec line, ```env MOZ_ENABLE_WAYLAND=1``` before ```firefox-esr```. This may get overriden on updates. You can use a GUI method to add the environment variable for your desktop environment.
 # Sources
 - [1] [Security - ArchWiki](https://wiki.archlinux.org/title/Security)
 - 
