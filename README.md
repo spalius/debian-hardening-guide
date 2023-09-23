@@ -41,6 +41,8 @@ To enable AppArmor for Firejail, do ```sudo apparmor_parser -r /etc/apparmor.d/f
 
 Download the most current release and open the folder in your terminal. Use ```make``` to build it. In order to install hardened_malloc, copy libhardened_malloc.so in the /out folder to ```/usr/local/lib/```. You can use it with Firejail. This may break some applications and generally speaking, your performance will be decreased. For applications which require performance, don't use hardened_malloc.
 
+To enable hardened_malloc system-wide, create and edit ```/etc/ld.so.preload``` to contain ```/usr/local/lib/libhardened_malloc.so```. This may break some applications and will lower performance. Soon, I will make it possible to create exceptions for applications that don't play well with this.
+
 # Sources
 - [1] [Security - ArchWiki](https://wiki.archlinux.org/title/Security)
 - 
