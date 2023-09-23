@@ -31,8 +31,13 @@ If an application doesn't work with Firejail properly, you can disable firecfg f
 
 In order to disable network access for a specific application, use --net=none. For example, ```firejail vlc --net=none```. This may be useful for applications which don't need network access to work.
 
-## Wayland
-[Keyloggers on Xorg are a big issue](https://theinvisiblethings.blogspot.com/2011/04/linux-security-circus-on-gui-isolation.html) Sandboxing can be rendered useless if any application can become a keylogger. Use Wayland with every single application that supports it. Firefox ESR, for some strange reason, doesn't run on Wayland by default on Debian 12, even if you are on a Wayland session. Launch Firefox with this environment variable: ```MOZ_ENABLE_WAYLAND=1```. To make this permanent, edit /usr/bin/firefox to include, in the exec line, ```env MOZ_ENABLE_WAYLAND=1``` before ```firefox-esr```. This may get overriden on updates. You can use a GUI method to add the environment variable for your desktop environment.
+To enable AppArmor for Firejail, do ```sudo apparmor_parser -r /etc/apparmor.d/firejail-default```.
+
+# Wayland
+[Keyloggers on Xorg are a big issue](https://theinvisiblethings.blogspot.com/2011/04/linux-security-circus-on-gui-isolation.html) Sandboxing can be rendered useless if any application can become a keylogger. Use Wayland with every single application that supports it. Firefox ESR, for some strange reason, doesn't run on Wayland by default on Debian 12, even if you are on a Wayland session. Launch Firefox with this environment variable: ```MOZ_ENABLE_WAYLAND=1```. To make this permanent, edit /usr/bin/firefox to include, in the exec line, ```env MOZ_ENABLE_WAYLAND=1``` before ```firefox-esr```. This may get overriden on updates. You can use a GUI method to add the environment variable for your desktop environment's application menu.
+
+# Hardened memory allocation
+[Hardened_malloc](https://github.com/GrapheneOS/hardened_malloc) was originally a project created for Android, which is implemented most heavily, to my knowledge, on GrapheneOS. Currently, Debian doesn't ship it, however, we can build it from source and use it with Firejail.
 # Sources
 - [1] [Security - ArchWiki](https://wiki.archlinux.org/title/Security)
 - 
