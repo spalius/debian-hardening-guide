@@ -70,66 +70,91 @@ These are only a few of the hardening measures you can apply to sysctl. I've sel
 After editing the file, run ```sudo update-grub```.
 
 Kernel pointer leak mitigation.
+
 ```kernel.kptr_restrict=2```
 
 You can restrict dmesg from leaking sensitive information, such as kernel pointers. 
+
 ```kernel.dmesg_restrict=1```
 
 To prevent viewing the kernel log in the console:
+
 ```kernel.printk=3 3 3 3```
 
 To disable booting another kernel during runtime:
+
 ``kernel.sysrq=4``
 ## Network
 Protects against SYN flood attacks, which are a form of denial-of-service attack.
+
 ```net.ipv4.tcp_syncookies=1```
 
 Protects against time-wait assassination.
+
 ```net.ipv4.tcp_rfc1337=1```
 
 Packets received from all interfaces of the computer will be validated. This protects against IP spoofing.
-```net.ipv4.conf.all.rp_filter=1```
-```net.ipv4.conf.default.rp_filter=1```
+
+```
+net.ipv4.conf.all.rp_filter=1
+net.ipv4.conf.default.rp_filter=1
+```
 
 Disable ICMP redirects.
-```net.ipv4.conf.all.accept_redirects = 0```
-```net.ipv4.conf.default.accept_redirects = 0```
-```net.ipv4.conf.all.secure_redirects = 0```
-```net.ipv4.conf.default.secure_redirects = 0```
-```net.ipv6.conf.all.accept_redirects = 0```
-```net.ipv6.conf.default.accept_redirects = 0```
+
+```
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.conf.all.secure_redirects = 0
+net.ipv4.conf.default.secure_redirects = 0
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv6.conf.default.accept_redirects = 0
+```
 
 Disable ICMP redirect sending.
-```net.ipv4.conf.all.send_redirects = 0```
-```net.ipv4.conf.default.send_redirects = 0```
+
+```
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+```
 
 Disable ICMP echo requests.
-```net.ipv4.icmp_echo_ignore_all = 1```
-```net.ipv6.icmp.echo_ignore_all = 1```
+```
+net.ipv4.icmp_echo_ignore_all = 1
+net.ipv6.icmp.echo_ignore_all = 1
+```
 
 # Kernel hardening
 Add these options to GRUB_CMDLINE_LINUX_DEFAULT in /etc/default/grub. Make sure to run ```sudo update-grub``` after adding options.
 To enable kernel lockdown mode:
+
 ```lockdown=confidentiality```
 This may break some applications. A less strict version is:
+
 ```lockdown=integrity```
 
 Disable slab merging.
+
 ```slab_nomerge```
 
 Enable zeroing memory during allocation and free time. Erases sensitive information in memory.
+
 ```init_on_alloc=1 init_on_free=1```
 
 This option randomizes page allocator freelists. Also improves performance.
+
 ```page_alloc.shuffle=1```
 
 Randomise the kernel stack offset on each syscall.
+
 ```randomize_kstack_offset=on```
 
 Disable debugfs, which reveals sensitive information about the kernel.
+
 ```debugfs=off```
 
 Require kernel modules to be signed, before they are loaded. Make sure to have done the required steps at the start of the guide.
+
 ```module.sig_enforce=1```
 
 ## Blacklisting kernel modules
@@ -164,15 +189,24 @@ install btusb /bin/false
 # Firewall
 Debian, by default, doesn't come with a preinstalled firewall. This can be a security issue in public, untrusted networks.
 [Firewalld](https://firewalld.org/) is the firewall installed by default on Fedora. It has a GUI to configure settings per network interface. To install it:
+
 ```sudo apt install firewalld firewall-config```
 The default settings are reasonably secure. Unless you need ssh, disable the service.
 
 # Identifiers
-A unique Machine ID is stored in /etc/machine-id and /var/lib/dbus/achine-id. Edit these to the Whonix ID ```b08dfa6083e7567a1921a715000001fb```.
+A unique Machine ID is stored in /etc/machine-id and /var/lib/dbus/achine-id. Edit these to the Whonix ID 
+```b08dfa6083e7567a1921a715000001fb```.
 
 ## MAC randomization
 To randomize your MAC address for more anonymity, install macchanger.
 [Further documentation](https://madaidans-insecurities.github.io/guides/linux-hardening.html#sysctl-kernel).
+
+# GRUB password
+To prevent unauthorized modification of GRUB menu entries, you can create a password.
+
+```sudo grub2-setpassword```
+
+Enter the password and press the enter key to confirm it.
 
 
 # Sources
