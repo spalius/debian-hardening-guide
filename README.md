@@ -77,10 +77,6 @@ You can restrict dmesg from leaking sensitive information, such as kernel pointe
 
 ```kernel.dmesg_restrict=1```
 
-To prevent viewing the kernel log in the console:
-
-```kernel.printk=3 3 3 3```
-
 To disable booting another kernel during runtime:
 
 ``kernel.sysrq=4``
