@@ -185,6 +185,18 @@ Bluetooth historically has been vulnerable to many security issues. If you do no
 install bluetooth /bin/false
 install btusb /bin/false
 ```
+If you do not use them,disable Thunderbolt and FireWire, as they are often vulnerable to some attacks.
+```
+install firewire-core /bin/false
+install thunderbolt /bin/false
+```
+To enable the IOMMU for DMA attack mitigation, add the following kernel boot parameters.
+
+```intel_iommu=on amd_iommu=on```
+
+Disabling the busmaster bit on all PCI bridges may be useful.
+
+```efi=disable_early_pci_dma```
 
 # Firewall
 Debian, by default, doesn't come with a preinstalled firewall. This can be a security issue in public, untrusted networks.
@@ -208,7 +220,17 @@ To prevent unauthorized modification of GRUB menu entries, you can create a pass
 
 Enter the password and press the enter key to confirm it.
 
+# Firefox
+Hardening Firefox completely is outside the scope of this guide. [However, this is a useful guide](https://brainfucksec.github.io/firefox-hardening-guide).
 
+Installing uBlock Origin is recommended. Enable advanced configuration and disable Javascript by default. Whitelist any website you need to use Javascript for. This should prevent a very large amount of vulnerabilities from being exploited, as Javascript historically has been a security issue in browsers. HTML exploits have existed, but are rare.
+
+# dnscrypt-proxy
+dnscrypt-proxy enables you to use DNS over HTTPS systemwide and also supports [DNS anonymization](https://github.com/dnscrypt/dnscrypt-proxy/wiki/Anonymized-DNS). 
+
+Refer to the [documentation](https://github.com/dnscrypt/dnscrypt-proxy/wiki/Installation-on-Debian-and-Ubuntu) for installation.
 # Sources
 - [1] [Security - ArchWiki](https://wiki.archlinux.org/title/Security)
 - [2] [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
+# Other useful resources
+[NSA's Hardware and Firmware Security Guidance](https://github.com/nsacyber/Hardware-and-Firmware-Security-Guidance#config)
