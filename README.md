@@ -216,9 +216,23 @@ To randomize your MAC address for more anonymity, install macchanger.
 # GRUB password
 To prevent unauthorized modification of GRUB menu entries, you can create a password.
 
-```sudo grub2-setpassword```
+```sudo grub-mkpasswd-pbkdf2``
 
 Enter the password and press the enter key to confirm it.
+
+In ```/etc/grub.d/40_custom``` add:
+```
+set superusers="username"
+password_pbkdf2 username password-hash
+```
+In place of password-hash, add the previously generated hash. However, this will require you to input your GRUB password to boot. In order to make it so that you are only required the password to edit a menu entry, in ```/etc/grub.d/10_linux```, find
+```
+echo "menuentry '$(echo "$title" | grub_quote)' --unrestricted ${CLASS} \$menuentry_id_option 'gnulinux-$version-$type-$boot_device_id' {" | sed "s/^/$submenu_indentation/"
+  else
+      echo "menuentry '$(echo "$os" | grub_quote)' --unrestricted  ${CLASS} \$menuentry_id_option 'gnulinux-simple-$boot_device_id' {" | sed "s/^/$submenu_indentation/"
+  fi    
+```
+And add --unrestricted options as displayed.
 
 # Firefox
 Hardening Firefox completely is outside the scope of this guide. [However, this is a useful guide](https://brainfucksec.github.io/firefox-hardening-guide).
