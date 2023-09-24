@@ -50,8 +50,120 @@ Make sure to raise ```vm.max_map_count```. In ```/etc/sysctl.d/hardened_malloc.c
 # Apt
 Apt by default uses http for downloads. For improved privacy, in ```/etc/apt/sources.list```, you can replace http with https.
 
+Apt has seccomp-bpf filtering, which restricts syscalls that APT is allowed to execute. Create /etc/apt/apt.conf.d/40sandbox and add:
+```APT::Sandbox::Seccomp "true";```
 
+# USBGuard
+[USBGuard](https://usbguard.github.io/) helps protect against physical attacks. The default install will allow you to use all of your connected USB devices. New devices will be blocked, until you configure them in /etc/usbguard/rules.conf.
+
+To install USBGuard, do ```sudo apt install usbguard```.
+
+To enable USBGuard, do ```sudo systemctl start usbguard.service```. USBGuard has a Qt GUI for configuration.
+
+Refer to the [documentation](https://usbguard.github.io/documentation/configuration.html) for usage.
+
+# Sysctl
+## Kernel self-protection
+These are only a few of the hardening measures you can apply to sysctl. I've selected those I've deemed to be necessary, while not compromising usability. In order to enable them, edit GRUB_CMDLINE_LINUX_DEFAULT. For example:
+```sysctl.kernel.kptr_restrict=2```.
+
+After editing the file, run ```sudo update-grub```.
+
+Kernel pointer leak mitigation.
+```kernel.kptr_restrict=2```
+
+You can restrict dmesg from leaking sensitive information, such as kernel pointers. 
+```kernel.dmesg_restrict=1```
+
+To prevent viewing the kernel log in the console:
+```kernel.printk=3 3 3 3```
+
+To disable booting another kernel during runtime:
+``kernel.sysrq=4``
+## Network
+Protects against SYN flood attacks, which are a form of denial-of-service attack.
+```net.ipv4.tcp_syncookies=1```
+
+Protects against time-wait assassination.
+```net.ipv4.tcp_rfc1337=1```
+
+Packets received from all interfaces of the computer will be validated. This protects against IP spoofing.
+```net.ipv4.conf.all.rp_filter=1```
+```net.ipv4.conf.default.rp_filter=1```
+
+Disable ICMP redirects.
+```net.ipv4.conf.all.accept_redirects = 0```
+```net.ipv4.conf.default.accept_redirects = 0```
+```net.ipv4.conf.all.secure_redirects = 0```
+```net.ipv4.conf.default.secure_redirects = 0```
+```net.ipv6.conf.all.accept_redirects = 0```
+```net.ipv6.conf.default.accept_redirects = 0```
+
+Disable ICMP redirect sending.
+```net.ipv4.conf.all.send_redirects = 0```
+```net.ipv4.conf.default.send_redirects = 0```
+
+Disable ICMP echo requests.
+```net.ipv4.icmp_echo_ignore_all = 1```
+```net.ipv6.icmp.echo_ignore_all = 1```
+
+# Kernel hardening
+Add these options to GRUB_CMDLINE_LINUX_DEFAULT in /etc/default/grub. Make sure to run ```sudo update-grub``` after adding options.
+To enable kernel lockdown mode:
+```lockdown=confidentiality```
+This may break some applications. A less strict version is:
+```lockdown=integrity```
+
+Disable slab merging.
+```slab_nomerge```
+
+Enable zeroing memory during allocation and free time. Erases sensitive information in memory.
+```init_on_alloc=1 init_on_free=1```
+
+This option randomizes page allocator freelists. Also improves performance.
+```page_alloc.shuffle=1```
+
+Randomise the kernel stack offset on each syscall.
+```randomize_kstack_offset=on```
+
+Disable debugfs, which reveals sensitive information about the kernel.
+```debugfs=off```
+
+Require kernel modules to be signed, before they are loaded. Make sure to have done the required steps at the start of the guide.
+```module.sig_enforce=1```
+
+## Blacklisting kernel modules
+Some rare kernel modules can be disabled, to reduce attack surface. Create /etc/modprobe.d/attack-surface-reduction.conf and add:
+```
+install dccp /bin/false
+install sctp /bin/false
+install rds /bin/false
+install tipc /bin/false
+install n-hdlc /bin/false
+install ax25 /bin/false
+install netrom /bin/false
+install x25 /bin/false
+install rose /bin/false
+install decnet /bin/false
+install econet /bin/false
+install af_802154 /bin/false
+install ipx /bin/false
+install appletalk /bin/false
+install psnap /bin/false
+install p8023 /bin/false
+install p8022 /bin/false
+install can /bin/false
+install atm /bin/false
+```
+Bluetooth historically has been vulnerable to many security issues. If you do not use Bluetooth, consider adding these lines to the previously mentioned file. This will disable Bluetooth.
+```
+install bluetooth /bin/false
+install btusb /bin/false
+```
+
+#
+[Further documentation](https://madaidans-insecurities.github.io/guides/linux-hardening.html#sysctl-kernel).
 
 # Sources
 - [1] [Security - ArchWiki](https://wiki.archlinux.org/title/Security)
-- 
+- [2] [Linux Hardening Guide](https://madaidans-insecurities.github.io/guides/linux-hardening.html)
