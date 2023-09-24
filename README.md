@@ -161,8 +161,19 @@ install bluetooth /bin/false
 install btusb /bin/false
 ```
 
-#
+# Firewall
+Debian, by default, doesn't come with a preinstalled firewall. This can be a security issue in public, untrusted networks.
+[Firewalld](https://firewalld.org/) is the firewall installed by default on Fedora. It has a GUI to configure settings per network interface. To install it:
+```sudo apt install firewalld firewall-config```
+The default settings are reasonably secure. Unless you need ssh, disable the service.
+
+# Identifiers
+A unique Machine ID is stored in /etc/machine-id and /var/lib/dbus/achine-id. Edit these to the Whonix ID ```b08dfa6083e7567a1921a715000001fb```.
+
+## MAC randomization
+To randomize your MAC address for more anonymity, install macchanger.
 [Further documentation](https://madaidans-insecurities.github.io/guides/linux-hardening.html#sysctl-kernel).
+
 
 # Sources
 - [1] [Security - ArchWiki](https://wiki.archlinux.org/title/Security)
